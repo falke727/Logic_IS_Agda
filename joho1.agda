@@ -247,6 +247,10 @@ e1-1-1 = lemma⇒e1-1-1 lemma
 open Relation.Binary.PropositionalEquality.≡-Reasoning
 open import Function
 
+lemma1 : ∀ b → {X : Set} → b ≈ t → b ≈ f → X
+lemma1 t _  ()
+lemma1 f () _
+
 -- 2) A ⊃ B がトートロジーで A が充足可能ならば，B も充足可能である．
 -- 直観的に解かり易いと思われる証明
 e1-1-2' : ∀ A B → isTautology (A ⊃ B) → isSatisfiable A → isSatisfiable B
@@ -614,14 +618,39 @@ theorem1-4-1 v | f = refl
 theorem1-4-2 : {A B : Form} → (A ~ B) → (B ~ A)
 theorem1-4-2 {A} {B} prf v with v ⟦ A ⟧₂ | v ⟦ B ⟧₂ | inspect (_⟦_⟧₂ v) A | inspect (_⟦_⟧₂ v) B
 theorem1-4-2 prf v | t | t | _ | _ = refl
-theorem1-4-2 {A} {B} prf v | t | f | [ eq ] | [ eq' ] = lemma (((v ⟦ A ⟧₂) imp (v ⟦ B ⟧₂)) and ((v ⟦ B ⟧₂) imp (v ⟦ A ⟧₂))) (prf v) (cong₂ _and_ (cong₂ _imp_ eq eq') (cong₂ _imp_ eq' eq))
-  where
-    lemma : ∀ b → {X : Set} → b ≈ t → b ≈ f → X
-    lemma t _  ()
-    lemma f () _
-theorem1-4-2 {A} {B} prf v | f | t | [ eq ] | [ eq' ] = lemma (((v ⟦ A ⟧₂) imp (v ⟦ B ⟧₂)) and ((v ⟦ B ⟧₂) imp (v ⟦ A ⟧₂))) (prf v) (cong₂ _and_ (cong₂ _imp_ eq eq') (cong₂ _imp_ eq' eq))
-  where
-    lemma : ∀ b → {X : Set} → b ≈ t → b ≈ f → X
-    lemma t _  ()
-    lemma f () _
+theorem1-4-2 {A} {B} prf v | t | f | [ eq ] | [ eq' ] 
+  = lemma1 (((v ⟦ A ⟧₂) imp (v ⟦ B ⟧₂)) and ((v ⟦ B ⟧₂) imp (v ⟦ A ⟧₂))) (prf v) (cong₂ _and_ (cong₂ _imp_ eq eq') (cong₂ _imp_ eq' eq))
+theorem1-4-2 {A} {B} prf v | f | t | [ eq ] | [ eq' ]
+  = lemma1 (((v ⟦ A ⟧₂) imp (v ⟦ B ⟧₂)) and ((v ⟦ B ⟧₂) imp (v ⟦ A ⟧₂))) (prf v) (cong₂ _and_ (cong₂ _imp_ eq eq') (cong₂ _imp_ eq' eq))
 theorem1-4-2 prf v | f | f | _ | _ = refl
+
+theorem1-4-3 : {A B C : Form} → (A ~ B) → (B ~ C) → (A ~ C)
+theorem1-4-3 {A} {B} {C} prfAB prfBC v with v ⟦ A ⟧₂ | v ⟦ B ⟧₂ | v ⟦ C ⟧₂ | inspect (_⟦_⟧₂ v) A | inspect (_⟦_⟧₂ v) B | inspect (_⟦_⟧₂ v) C
+theorem1-4-3 {A} {B} {C} prfAB prfBC v | t | t | t | [ eqA ] | [ eqB ] | [ eqC ] = refl
+theorem1-4-3 {A} {B} {C} prfAB prfBC v | t | t | f | [ eqA ] | [ eqB ] | [ eqC ]
+  = lemma1 (((v ⟦ B ⟧₂) imp (v ⟦ C ⟧₂)) and ((v ⟦ C ⟧₂) imp (v ⟦ B ⟧₂))) (prfBC v) (cong₂ _and_ (cong₂ _imp_ eqB eqC) (cong₂ _imp_ eqC eqB))
+theorem1-4-3 {A} {B} {C} prfAB prfBC v | t | f | t | [ eqA ] | [ eqB ] | [ eqC ] = refl
+theorem1-4-3 {A} {B} {C} prfAB prfBC v | t | f | f | [ eqA ] | [ eqB ] | [ eqC ]
+  = lemma1 (((v ⟦ A ⟧₂) imp (v ⟦ B ⟧₂)) and ((v ⟦ B ⟧₂) imp (v ⟦ A ⟧₂))) (prfAB v) (cong₂ _and_ (cong₂ _imp_ eqA eqB) (cong₂ _imp_ eqB eqA))
+theorem1-4-3 {A} {B} {C} prfAB prfBC v | f | t | t | [ eqA ] | [ eqB ] | [ eqC ]
+  = lemma1 (((v ⟦ A ⟧₂) imp (v ⟦ B ⟧₂)) and ((v ⟦ B ⟧₂) imp (v ⟦ A ⟧₂))) (prfAB v) (cong₂ _and_ (cong₂ _imp_ eqA eqB) (cong₂ _imp_ eqB eqA))
+theorem1-4-3 {A} {B} {C} prfAB prfBC v | f | t | f | [ eqA ] | [ eqB ] | [ eqC ] = refl
+theorem1-4-3 {A} {B} {C} prfAB prfBC v | f | f | t | [ eqA ] | [ eqB ] | [ eqC ]
+  = lemma1 (((v ⟦ B ⟧₂) imp (v ⟦ C ⟧₂)) and ((v ⟦ C ⟧₂) imp (v ⟦ B ⟧₂))) (prfBC v) (cong₂ _and_ (cong₂ _imp_ eqB eqC) (cong₂ _imp_ eqC eqB))
+theorem1-4-3 {A} {B} {C} prfAB prfBC v | f | f | f | [ eqA ] | [ eqB ] | [ eqC ] = refl
+
+data _==_ {A : Set}(x : A) : A -> Set where
+  refl : x == x
+
+-- 論理式 C の中の命題変数のいくつかの出現を論理式Aでおきかえて得られる論理式を C [ p ≔ A ] と表す（木下修司さんのコードを参考）．
+infix 30 _[_≔_]
+_[_≔_] : Form → prop → Form → Form
+var x [ p ≔ A ] with {!!}
+var x [ p ≔ A ] | t = A
+var x [ p ≔ A ] | f = var x
+(C ∧ D) [ p ≔ A ] = C [ p ≔ A ] ∧ D [ p ≔ A ]
+(C ∨ D) [ p ≔ A ] = C [ p ≔ A ] ∨ D [ p ≔ A ]
+(C ⊃ D) [ p ≔ A ] = C [ p ≔ A ] ⊃ D [ p ≔ A ]
+(¬ C) [ p ≔ A ] = ¬ C [ p ≔ A ]
+⊤ [ X ≔ Y ] = ⊤
+⊥₂ [ X ≔ Y ] = ⊥₂
