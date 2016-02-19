@@ -642,10 +642,17 @@ theorem1-4-3 {A} {B} {C} prfAB prfBC v | f | f | f | [ eqA ] | [ eqB ] | [ eqC ]
 data _==_ {A : Set}(x : A) : A -> Set where
   refl : x == x
 
+_≟_ : Nat → Nat → Bool
+Z ≟ Z = t
+Z ≟ Suc n = f
+Suc m ≟ Z = f
+Suc m ≟ Suc n = m ≟ n
+
 -- 論理式 C の中の命題変数のいくつかの出現を論理式Aでおきかえて得られる論理式を C [ p ≔ A ] と表す（木下修司さんのコードを参考）．
+
 infix 30 _[_≔_]
 _[_≔_] : Form → prop → Form → Form
-var x [ p ≔ A ] with {!!}
+var x [ p ≔ A ] with x ≟ p
 var x [ p ≔ A ] | t = A
 var x [ p ≔ A ] | f = var x
 (C ∧ D) [ p ≔ A ] = C [ p ≔ A ] ∧ D [ p ≔ A ]
@@ -654,3 +661,14 @@ var x [ p ≔ A ] | f = var x
 (¬ C) [ p ≔ A ] = ¬ C [ p ≔ A ]
 ⊤ [ X ≔ Y ] = ⊤
 ⊥₂ [ X ≔ Y ] = ⊥₂
+
+theorem1-4-4 : (A B C : Form) → (p : prop) → (A ~ B) → C [ p ≔ A ] ~ C [ p ≔ B ]
+theorem1-4-4 A B (var x) p prfAB v with x ≟ p
+theorem1-4-4 A B (var x) p prfAB v | t = prfAB v
+theorem1-4-4 A B (var x) p prfAB v | f = theorem1-4-1 {var x} v
+theorem1-4-4 A B (C ∧ D) p prfAB v rewrite theorem1-4-4 A B C p prfAB v | theorem1-4-4 A B D p prfAB v = {!!}
+theorem1-4-4 A B (C ∨ D) p prfAB v = {!!}
+theorem1-4-4 A B (C ⊃ D) p prfAB v = {!!}
+theorem1-4-4 A B (¬ C) p prfAB v = {!!}
+theorem1-4-4 A B ⊤ p prfAB v = refl
+theorem1-4-4 A B ⊥₂ p prfAB v = refl
