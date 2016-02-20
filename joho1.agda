@@ -662,13 +662,27 @@ var x [ p ≔ A ] | f = var x
 ⊤ [ X ≔ Y ] = ⊤
 ⊥₂ [ X ≔ Y ] = ⊥₂
 
+{--
 theorem1-4-4 : (A B C : Form) → (p : prop) → (A ~ B) → C [ p ≔ A ] ~ C [ p ≔ B ]
 theorem1-4-4 A B (var x) p prfAB v with x ≟ p
 theorem1-4-4 A B (var x) p prfAB v | t = prfAB v
 theorem1-4-4 A B (var x) p prfAB v | f = theorem1-4-1 {var x} v
-theorem1-4-4 A B (C ∧ D) p prfAB v rewrite theorem1-4-4 A B C p prfAB v | theorem1-4-4 A B D p prfAB v = {!!}
+theorem1-4-4 A B (C ∧ D) p prfAB v = {!!}
 theorem1-4-4 A B (C ∨ D) p prfAB v = {!!}
 theorem1-4-4 A B (C ⊃ D) p prfAB v = {!!}
 theorem1-4-4 A B (¬ C) p prfAB v = {!!}
 theorem1-4-4 A B ⊤ p prfAB v = refl
 theorem1-4-4 A B ⊥₂ p prfAB v = refl
+--}
+
+-- p.15 p ⊃ (q ⊃ r) ~ (p ∧ q) ⊃ r が成り立つことを示せ（uncurry）．
+e1-8 : (p q r : prop) → (var p ⊃ (var q ⊃ var r)) ~ ((var p ∧ var q) ⊃ var r)
+e1-8 p q r v with v ⟦ var p ⟧ | v ⟦ var q ⟧ | v ⟦ var r ⟧
+e1-8 p q r v | t | t | t = refl
+e1-8 p q r v | t | t | f = refl
+e1-8 p q r v | t | f | t = refl
+e1-8 p q r v | t | f | f = refl
+e1-8 p q r v | f | t | t = refl
+e1-8 p q r v | f | t | f = refl
+e1-8 p q r v | f | f | t = refl
+e1-8 p q r v | f | f | f = refl
